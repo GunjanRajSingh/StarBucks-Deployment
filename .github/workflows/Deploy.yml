@@ -141,7 +141,7 @@ jobs:
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "myapp:latest"  # Local image built above
+          image-ref: ${{ env.ACR_LOGIN_SERVER }}/starbucks:latest
           format: "table"
           severity: "CRITICAL,HIGH"
           exit-code: 1               # Break pipeline if vulns found
