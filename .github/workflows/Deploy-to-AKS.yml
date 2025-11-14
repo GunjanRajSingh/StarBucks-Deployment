@@ -113,9 +113,18 @@ jobs:
 # --------------------- DEPLOY TO AKS & EMAIL NOTIFICATION ---------------------
 
   Deploy-:
-    runs-on: ubuntu-latest
     needs: Build-Scan-Push
-    steps:
+    runs-on: ubuntu-latest
+    steps:         
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # Az Login
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       # Deploy to AKS
       - name: Set AKS Context
         uses: azure/aks-set-context@v4
