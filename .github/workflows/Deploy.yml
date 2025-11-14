@@ -1,6 +1,8 @@
 name: Build & Push Frontend Application to ACR + Deploy on AKS
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -57,15 +59,26 @@ jobs:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
+      # - name: SonarQube Scan
+      #   uses: SonarSource/sonarqube-scan-action@v4
+      #   with:
+      #     args: >
+      #       -Dsonar.projectKey=starbucks
+      #       -Dsonar.projectName=starbucks
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
             -Dsonar.projectKey=starbucks
             -Dsonar.projectName=starbucks
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
 
 
       # Wait for SonarQube Quality Gate
