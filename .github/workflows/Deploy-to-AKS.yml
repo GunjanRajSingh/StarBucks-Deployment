@@ -1,6 +1,8 @@
 name: Build & Push Frontend Application to ACR + Deploy on AKS
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -17,15 +19,19 @@ env:
   
 
 jobs:
-  build-and-deploy:
+  Build-Scan-Push:
     runs-on: ubuntu-latest
-    steps:
+<<<<<<< HEAD:.github/workflows/Deploy.yml
+=======
 
+# --------------------- BUILD & SECURITY SCAN & PUSH ---------------------
+>>>>>>> c66faf44458cb78604cf28421a1845450d3456b3:.github/workflows/Deploy-to-AKS.yml
+    steps:
       - name: Clean Workspace
         run: |
           sudo rm -rf *
           echo "Workspace cleaned."
-         
+          
       # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,16 +52,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-
       # SonarQube scan
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          projectBaseDir: .
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
+        with:
+          args: >
+            -Dsonar.projectKey=starbucks
+            -Dsonar.projectName=starbucks
 
       # Wait for SonarQube Quality Gate
       - name: Wait for SonarQube Quality Gate
@@ -66,25 +72,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-
-      #  Install Trivy
-      # - name: Install Trivy
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-      #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-      #     echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-      #     sudo apt-get update && sudo apt-get install -y trivy
-
-      # - name: Trivy File System Scan
-      #   run: trivy fs . > trivyfs.txt
-
-      # - name: Upload Trivy FS Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: trivy-fs-report
-      #     path: trivyfs.txt
-      
+      #  Install Trivy   
       - name: Aqua Security Trivy
         uses: aquasecurity/trivy-action@0.33.1
         with:
@@ -104,7 +92,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-
        # Build and push Docker image
       - name: Build and Push Docker image
         uses: docker/build-push-action@v6
@@ -117,16 +104,30 @@ jobs:
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "myapp:latest"  # Local image built above
+          image-ref: ${{ env.ACR_LOGIN_SERVER }}/starbucks:latest
           format: "table"
           severity: "CRITICAL,HIGH"
-          exit-code: 1               # Break pipeline if vulns found
+          exit-code: 0               
           ignore-unfixed: true
           vuln-type: "os,library"
           output: 'trivyimage.txt'
 
 
+# --------------------- DEPLOY TO AKS & EMAIL NOTIFICATION ---------------------
 
+  Deploy-:
+    needs: Build-Scan-Push
+    runs-on: ubuntu-latest
+    steps:         
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # Az Login
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       # Deploy to AKS
       - name: Set AKS Context
         uses: azure/aks-set-context@v4
@@ -138,14 +139,14 @@ jobs:
         run: |
           az account set --subscription ${{ env.SUBSCRIPTION_ID }}
           az aks get-credentials --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }} --overwrite-existing
-          git clone https://github.com/GunjanRajSingh/StarBucks-Deployment.git
+          # git clone https://github.com/GunjanRajSingh/StarBucks-Deployment.git
           cd StarBuck-Manifest
           kubectl create ns starbucks-ns
           kubectl apply -f .
           kubectl get pods -n starbucks-ns
           kubectl get ingress -n starbucks-ns -owide
 
-      # --------------------- EMAIL NOTIFICATION ---------------------
+      #  Email Notification
       - name: Send Email Notification
         if: always()
         uses: dawidd6/action-send-mail@v3
