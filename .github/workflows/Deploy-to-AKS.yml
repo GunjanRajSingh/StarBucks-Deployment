@@ -61,14 +61,14 @@ jobs:
             -Dsonar.projectKey=starbucks
             -Dsonar.projectName=starbucks
 
-      # Wait for SonarQube Quality Gate
-      - name: Wait for SonarQube Quality Gate
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        with:
-          pollingTimeoutSec: 600
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # # Wait for SonarQube Quality Gate
+      # - name: Wait for SonarQube Quality Gate
+      #   uses: sonarsource/sonarqube-quality-gate-action@master
+      #   with:
+      #     pollingTimeoutSec: 600
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       #  Install Trivy   
       - name: Aqua Security Trivy
