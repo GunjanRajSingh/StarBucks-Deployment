@@ -1,0 +1,50 @@
+name: StarBuck Frontend Application on AKS              #project ka name hai
+on:
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
+  workflow_dispatch:                     #Manual trigger karne ke liye
+
+
+jobs:
+  BuildScanPushJob:
+    runs-on: ubuntu-latest
+    steps:
+      # Repo Checkout to Runner
+      - name: Repo Checkout
+        uses: actions/checkout@v6
+
+      # Node.Js setup
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v6.1.0
+        with:
+          node-version: 18
+
+      # Dependency Install
+      - name: NPM install
+        run: npm install
+
+      # SonarQube scan
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=starbucks
+            -Dsonar.projectName=starbucks
+
+      # Wait for SonarQube Quality Gate
+      - name: Wait for SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      
