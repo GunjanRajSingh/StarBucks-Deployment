@@ -1,11 +1,11 @@
 name: StarBuck Frontend Application on AKS              #project ka name hai
 on:
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:                     #Manual trigger karne ke liye
 
 
