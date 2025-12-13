@@ -40,36 +40,36 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # # Setup Node.js
-      # - name: Set up Node.js
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '18'
+      # Setup Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      # # Install dependencies
-      # - name: Install dependencies
-      #   run: npm install
+      # SonarQube scan
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=starbucks
+            -Dsonar.projectName=starbucks
 
-      # # SonarQube scan
-      # - name: SonarQube Scan
-      #   uses: SonarSource/sonarqube-scan-action@v4
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      #   with:
-      #     args: >
-      #       -Dsonar.projectKey=starbucks
-      #       -Dsonar.projectName=starbucks
+      # Wait for SonarQube Quality Gate
+      - name: Wait for SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # # # Wait for SonarQube Quality Gate
-      # # - name: Wait for SonarQube Quality Gate
-      # #   uses: sonarsource/sonarqube-quality-gate-action@master
-      # #   with:
-      # #     pollingTimeoutSec: 600
-      # #   env:
-      # #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      # #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+        
       # #  Install Trivy   
       # - name: Aqua Security Trivy
       #   uses: aquasecurity/trivy-action@0.33.1
@@ -82,21 +82,21 @@ jobs:
       #     format: 'table'
       #     output: 'trivyfs.txt'
 
-      # Login to ACR
-      - name: Azure ACR Login
-        run: az acr login --name ${{ env.ACR_NAME }}
+      # # Login to ACR
+      # - name: Azure ACR Login
+      #   run: az acr login --name ${{ env.ACR_NAME }}
 
-      # Setup Docker
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # # Setup Docker
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
-       # Build and push Docker image
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ env.ACR_LOGIN_SERVER }}/starbucks:latest
+      #  # Build and push Docker image
+      # - name: Build and Push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ env.ACR_LOGIN_SERVER }}/starbucks:latest
 
       # # Trivy Image Scan
       # - name: Trivy Image Scan
@@ -111,37 +111,37 @@ jobs:
       #     output: 'trivyimage.txt'
 
 
-# --------------------- DEPLOY TO AKS & EMAIL NOTIFICATION ---------------------
+# # --------------------- DEPLOY TO AKS & EMAIL NOTIFICATION ---------------------
 
-  Deploy-:
-    needs: Build-Scan-Push
-    runs-on: ubuntu-latest
-    steps:         
-      # Checkout repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#   Deploy-:
+#     needs: Build-Scan-Push
+#     runs-on: ubuntu-latest
+#     steps:         
+#       # Checkout repository
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
       
-      # Az Login
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      # Deploy to AKS
-      - name: Set AKS Context
-        uses: azure/aks-set-context@v4
-        with:
-          resource-group: ${{ env.AKS_RESOURCE_GROUP }} 
-          cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+#       # Az Login
+#       - name: Azure Login
+#         uses: azure/login@v2
+#         with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
+#       # Deploy to AKS
+#       - name: Set AKS Context
+#         uses: azure/aks-set-context@v4
+#         with:
+#           resource-group: ${{ env.AKS_RESOURCE_GROUP }} 
+#           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
 
-      - name: Deploy Manifests to AKS
-        run: |
-          az account set --subscription ${{ env.SUBSCRIPTION_ID }}
-          az aks get-credentials --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }} --overwrite-existing
-          cd StarBuck-Manifest
-          kubectl create ns starbucks-ns
-          kubectl apply -f .
-          kubectl get pods -n starbucks-ns
-          kubectl get ingress -n starbucks-ns -owide
+#       - name: Deploy Manifests to AKS
+#         run: |
+#           az account set --subscription ${{ env.SUBSCRIPTION_ID }}
+#           az aks get-credentials --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }} --overwrite-existing
+#           cd StarBuck-Manifest
+#           kubectl create ns starbucks-ns
+#           kubectl apply -f .
+#           kubectl get pods -n starbucks-ns
+#           kubectl get ingress -n starbucks-ns -owide
 
       # #  Email Notification
       # - name: Send Email Notification
