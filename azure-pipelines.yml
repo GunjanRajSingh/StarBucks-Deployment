@@ -55,6 +55,6 @@ stages:
             displayName: Publish to Azure Artifacts
             inputs:
               command: 'publish'
-              workingDir: '$(Build.ArtifactStagingDirectory)'
+              workingDir: '$(Build.SourcesDirectory)'
               publishRegistry: 'useFeed'
               publishFeed: '126d3721-e663-43cd-a888-a612bc1d0fdc/0603855c-0156-40c5-9a6d-0c5d69e10840'
