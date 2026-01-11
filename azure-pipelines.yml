@@ -3,7 +3,7 @@ name: GitHub-StarBucks-Frontend
 trigger:
  branches:
    include:
-     - main
+     - none
 
 pool:
   vmImage: ubuntu-latest
@@ -26,17 +26,20 @@ stages:
               versionSource: 'spec'
               versionSpec: '20.x'
 
+
           - task: Npm@1
             displayName: NPM Install/Package
             inputs:
               command: 'install'
               # command: ci    
 
+
           - task: Npm@1
             displayName: NPM Build
             inputs:
               command: 'custom'
               customCommand: 'run build'
+
 
           - task: PublishBuildArtifacts@1
             displayName: Upload Artifact from Agent to Pipeline
@@ -46,12 +49,6 @@ stages:
               ArtifactName: 'StarBucksV1.2'
               publishLocation: 'Container'
 
-          # - task: Npm@1
-          #   inputs:
-          #     command: 'publish'
-          #     workingDir: './dist'
-          #     publishRegistry: 'useFeed'
-          #     publishFeed: '126d3721-e663-43cd-a888-a612bc1d0fdc/0603855c-0156-40c5-9a6d-0c5d69e10840'
 
           - task: Npm@1
             displayName: Publish to Azure Artifacts
@@ -60,3 +57,17 @@ stages:
               workingDir: '$(Build.SourcesDirectory)'
               publishRegistry: 'useFeed'
               publishFeed: '126d3721-e663-43cd-a888-a612bc1d0fdc/0603855c-0156-40c5-9a6d-0c5d69e10840'
+
+
+
+
+  - stage: Deploy
+    jobs:
+      - job: Deploy
+        steps:
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'starbucks-redesign 0.0.0'
+            downloadPath: '$(System.ArtifactsDirectory)'
