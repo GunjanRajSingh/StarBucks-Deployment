@@ -72,7 +72,14 @@ stages:
           #     vstsFeedPackage: 'starbucks-redesign-1'
           #     vstsPackageVersion: '0.1.0'
 
-
+          - task: UniversalPackages@0
+            inputs:
+              command: 'publish'
+              publishDirectory: '$(Build.ArtifactStagingDirectory)'
+              feedsToUse: 'internal'
+              vstsFeed: 'Project-5th/Star'
+              vstsFeedPackage: 'starbucks-redesign-1'
+              vstsPackageVersion: '0.1.0'
           - task: UniversalPackages@0
             inputs:
               command: 'download'
