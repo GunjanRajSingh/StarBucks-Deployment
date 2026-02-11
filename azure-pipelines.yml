@@ -8,8 +8,8 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  - group: New
+# variables:
+#   - group: New
 
 stages:
   - stage: Build
@@ -41,13 +41,13 @@ stages:
               customCommand: 'run build'
 
 
-          - task: PublishBuildArtifacts@1
-            displayName: Upload Artifact from Agent to Pipeline
-            inputs:
-              # PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              PathtoPublish: 'dist'
-              ArtifactName: 'StarBucksV1.2'
-              publishLocation: 'Container'
+          # - task: PublishBuildArtifacts@1
+          #   displayName: Upload Artifact from Agent to Pipeline
+          #   inputs:
+          #     # PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          #     PathtoPublish: 'dist'
+          #     ArtifactName: 'StarBucksV1.2'
+          #     publishLocation: 'Container'
 
 
           - task: Npm@1
@@ -59,8 +59,6 @@ stages:
               publishFeed: '126d3721-e663-43cd-a888-a612bc1d0fdc/0603855c-0156-40c5-9a6d-0c5d69e10840'
 
 
-
-
   - stage: Deploy
     jobs:
       - job: Deploy
@@ -69,5 +67,5 @@ stages:
           inputs:
             buildType: 'current'
             downloadType: 'single'
-            artifactName: 'starbucks-redesign 0.0.0'
+            artifactName: 'starbucks-redesign-1 0.1.0'
             downloadPath: '$(System.ArtifactsDirectory)'
