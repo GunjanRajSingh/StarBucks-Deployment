@@ -63,9 +63,11 @@ stages:
     jobs:
       - job: Deploy
         steps:
-        - task: DownloadBuildArtifacts@1
-          inputs:
-            buildType: 'current'
-            downloadType: 'single'
-            artifactName: 'starbucks-redesign-1'
-            downloadPath: '$(System.ArtifactsDirectory)'
+          - task: UniversalPackages@0
+            inputs:
+              command: 'download'
+              downloadDirectory: '$(Pipeline.Workspace)/artifact'
+              feedsToUse: 'internal'
+              vstsFeed: 'Star'
+              vstsFeedPackage: 'starbucks-redesign-1'
+              vstsPackageVersion: '0.1.0'
