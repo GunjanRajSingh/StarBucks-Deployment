@@ -3,7 +3,7 @@ name: GitHub-StarBucks-Frontend
 trigger:
   branches:
     include:
-      - none
+      - main
 
 pool:
   vmImage: ubuntu-latest
