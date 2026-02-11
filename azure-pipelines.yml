@@ -12,51 +12,51 @@ pool:
 #   - group: New
 
 stages:
-  - stage: Build
-    displayName: Build Stage
-    jobs:
-      - job: Build
-        displayName: Build Job
-        steps:
-          - checkout: self
+  # - stage: Build
+  #   displayName: Build Stage
+  #   jobs:
+  #     - job: Build
+  #       displayName: Build Job
+  #       steps:
+  #         - checkout: self
           
-          - task: NodeTool@0
-            displayName: Node.Js Tool Installer
-            inputs:
-              versionSource: 'spec'
-              versionSpec: '20.x'
+  #         - task: NodeTool@0
+  #           displayName: Node.Js Tool Installer
+  #           inputs:
+  #             versionSource: 'spec'
+  #             versionSpec: '20.x'
 
 
-          - task: Npm@1
-            displayName: NPM Install/Package
-            inputs:
-              command: 'install'
-              # command: ci    
+  #         - task: Npm@1
+  #           displayName: NPM Install/Package
+  #           inputs:
+  #             command: 'install'
+  #             # command: ci    
 
 
-          - task: Npm@1
-            displayName: NPM Build
-            inputs:
-              command: 'custom'
-              customCommand: 'run build'
+  #         - task: Npm@1
+  #           displayName: NPM Build
+  #           inputs:
+  #             command: 'custom'
+  #             customCommand: 'run build'
 
 
-          # - task: PublishBuildArtifacts@1
-          #   displayName: Upload Artifact from Agent to Pipeline
-          #   inputs:
-          #     # PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          #     PathtoPublish: 'dist'
-          #     ArtifactName: 'StarBucksV1.2'
-          #     publishLocation: 'Container'
+  #         # - task: PublishBuildArtifacts@1
+  #         #   displayName: Upload Artifact from Agent to Pipeline
+  #         #   inputs:
+  #         #     # PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+  #         #     PathtoPublish: 'dist'
+  #         #     ArtifactName: 'StarBucksV1.2'
+  #         #     publishLocation: 'Container'
 
 
-          - task: Npm@1
-            displayName: Publish to Azure Artifacts
-            inputs:
-              command: 'publish'
-              workingDir: '$(Build.SourcesDirectory)'
-              publishRegistry: 'useFeed'
-              publishFeed: '126d3721-e663-43cd-a888-a612bc1d0fdc/0603855c-0156-40c5-9a6d-0c5d69e10840'
+  #         - task: Npm@1
+  #           displayName: Publish to Azure Artifacts
+  #           inputs:
+  #             command: 'publish'
+  #             workingDir: '$(Build.SourcesDirectory)'
+  #             publishRegistry: 'useFeed'
+  #             publishFeed: '126d3721-e663-43cd-a888-a612bc1d0fdc/0603855c-0156-40c5-9a6d-0c5d69e10840'
 
 
   - stage: Deploy
