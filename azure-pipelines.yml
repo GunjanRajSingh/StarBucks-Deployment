@@ -67,5 +67,5 @@ stages:
           inputs:
             buildType: 'current'
             downloadType: 'single'
-            artifactName: 'starbucks-redesign-1 0.1.0'
+            artifactName: 'starbucks-redesign-1'
             downloadPath: '$(System.ArtifactsDirectory)'
