@@ -1,7 +1,7 @@
 {
-  "name": "starbucks-redesign",
+  "name": "starbucks-redesign-1",
   "private": false,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "start": "vite preview --host",
