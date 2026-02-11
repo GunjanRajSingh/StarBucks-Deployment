@@ -31,11 +31,13 @@ stages:
       displayName: npm install
       inputs:
         command: 'install'
+        workingDir: '$(System.DefaultWorkingDirectory)'
 
     - task: Npm@1
       displayName: npm build
       inputs:
         command: 'custom'
+        workingDir: '$(System.DefaultWorkingDirectory)'
         customCommand: 'run build'
 
     # Publish package to Azure Artifacts (npm feed)
