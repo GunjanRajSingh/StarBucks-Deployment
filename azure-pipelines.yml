@@ -63,11 +63,21 @@ stages:
     jobs:
       - job: Deploy
         steps:
+          # - task: UniversalPackages@0
+          #   inputs:
+          #     command: 'download'
+          #     downloadDirectory: '$(Pipeline.Workspace)/artifact'
+          #     feedsToUse: 'internal'
+          #     vstsFeed: 'Star'
+          #     vstsFeedPackage: 'starbucks-redesign-1'
+          #     vstsPackageVersion: '0.1.0'
+
+
           - task: UniversalPackages@0
             inputs:
               command: 'download'
               downloadDirectory: '$(Pipeline.Workspace)/artifact'
               feedsToUse: 'internal'
-              vstsFeed: 'Star'
+              vstsFeed: 'Project-5th/Star'
               vstsFeedPackage: 'starbucks-redesign-1'
               vstsPackageVersion: '0.1.0'
