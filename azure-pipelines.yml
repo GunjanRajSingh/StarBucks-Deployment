@@ -76,7 +76,7 @@ stages:
       displayName: Download package from Azure Artifacts
       inputs:
         command: 'custom'
-        customCommand: 'npm install starbucks-redesign-2@0.2.0'
+        customCommand: 'install starbucks-redesign-2@0.2.0'
 
     # - task: Npm@1
     #   displayName: Download package from Azure Artifacts
