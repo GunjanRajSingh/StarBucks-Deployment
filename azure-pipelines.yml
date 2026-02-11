@@ -79,12 +79,14 @@ stages:
     #     customCommand: 'npm install starbucks-redesign-2@0.2.0'
 
     - task: Npm@1
+      displayName: Download package from Azure Artifacts
       inputs:
         command: 'custom'
         workingDir: '$(System.DefaultWorkingDirectory)'
         customCommand: 'npm install starbucks-redesign-2@0.2.0'
         customRegistry: 'useFeed'
         customFeed: '126d3721-e663-43cd-a888-a612bc1d0fdc/0603855c-0156-40c5-9a6d-0c5d69e10840'
+
 
     # # Copy package contents to VM
     # - task: CopyFilesOverSSH@0
